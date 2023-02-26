@@ -54,7 +54,7 @@
       {
         "key": "tray-key2",
         "name": {
-          "key": "test"
+          "key": "current year"
         },
         "queryRole": "measure"
       }

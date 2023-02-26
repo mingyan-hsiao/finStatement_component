@@ -20,7 +20,7 @@ interface Props {
 const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
   console.log(data)
   
-  /* Gets dimentions and measures columns */
+  // Gets dimentions and measures columns 
   const dims = data.rowHeaders?.map(cell => {
     return { field: cell.id, header: cell.label, type: 'dimention' };
   }) ?? [];
@@ -28,16 +28,16 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
   return { field: cell.id, header: cell.label, type: 'measure' };
   });
   const cols = dims.concat(maasures);
-  /* only get the header name */
+  // only get the header name 
   let colsName = cols.map(a => a.header);
   let maasureName = maasures.map(a => a.header);
 
-  /* get data from Incorta and put into array*/
+  // get data from Incorta and put into array
   let _rawData = data.data.map((col: any) => {
     let colsName = col;
     return colsName});
  
-  /* adjust the key name with colsName */
+  // adjust the key name with colsName 
   const raw_input: any[] = []
   _rawData.map(function(d){
     let r = {}
@@ -46,7 +46,7 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
     raw_input.push(r) // append array
     })
 
-  /* unpiviot the column into: period, item, amount */
+  // unpiviot the column into: period, item, amount 
   let dt = tidy(
       raw_input,
       pivotLonger({
@@ -56,27 +56,25 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
       })
     );
 
-  /* change data type to float for agregation */
+  // change data type to float for agregation 
   dt.map(function(d){
     d.Period = parseFloat(d.Period);
     d.amount = parseFloat(d.amount);})
   
-  /* agregation by period and item */
+  // agregation by period and item 
   let new_dt = tidy(
     dt,
     groupBy(['Period', 'item'], [summarize({ total: sum('amount') })]))
   
-  // fixed the input current year
+  // fixe the input current year, will be revised in the next steps
   let curr = 2022
   let currdata = tidy(new_dt, filter((d) => d.Period === curr))
   let lastdata = tidy(new_dt, filter((d) => d.Period === curr-1))
   // change the key name of last year data
   let lastyrdata = lastdata.map(({
     total: totallast,
-    ...rest
-  }) => ({
-    totallast,
-    ...rest
+    ...rest}) => ({
+    totallast, ...rest
   }));
   
   // left join two years' data 
@@ -94,15 +92,14 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
     last_ratio: (d: any)=> formatAsPercent(d.totallast/twodata.at(0)?.totallast!)
   }))
   
-console.log("test0222");
-console.log(ratio_dt);
+  console.log("output");
+  console.log(ratio_dt);
 
 
   const DisplayData=ratio_dt.map(
     (info)=>{
         return(
             <tr>
-                
                 <td>{info.item}</td>
                 <td>{info.total}</td>
                 <td>{info.curr_ratio}</td>
