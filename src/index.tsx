@@ -6,7 +6,7 @@ import {
   usePrompts,
   useQuery
 } from '@incorta-org/component-sdk';
-import FinStatementComponent from './FinStatementComponent';
+import FinStatementComponent from './FinStatement';
 import './styles.less';
 
 export default () => {
