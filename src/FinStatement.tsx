@@ -37,8 +37,6 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
     let colsName = col;
     return colsName});
     
-  
-
   // adjust the key name with colsName 
   let raw_input: any[] = []
   _rawData.map(function(d){
@@ -66,6 +64,7 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
         valuesTo: 'amount',
       })
     );
+  console.log(dt)
 
   // change data type to float for agregation 
   dt.map(function(d){
@@ -77,7 +76,6 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
     dt,
     groupBy(['Period', 'item'], [summarize({ total: sum('amount') })]))
   
-  // fixe the input current year, will be revised in the next steps
   
   let currdata = tidy(new_dt, filter((d) => d.Period === curr))
   let lastdata = tidy(new_dt, filter((d) => d.Period === curr-1))
@@ -91,7 +89,8 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
   // left join two years' data 
   let twodata = tidy(currdata,
       leftJoin(lastyrdata, { by: 'item' }))
-
+  console.log("two")
+  console.log(twodata)
   // add percentage change rate between two years
   function formatAsPercent(num:number) {
       return `${Math.floor(num*100)}%`;}
@@ -102,10 +101,10 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
     curr_ratio: (d: any)=> formatAsPercent(d.total/twodata.at(0)?.total!),
     last_ratio: (d: any)=> formatAsPercent(d.totallast/twodata.at(0)?.totallast!)
   }))
-  
+  ratio_dt.pop()
   console.log("output");
   console.log(ratio_dt);
-
+  
 
   const DisplayData=ratio_dt.map(
     (info)=>{
@@ -124,7 +123,8 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
 
 
   return (
-    <div><h2>Income Statement</h2>
+    <div><h2>{curr} Income Statement</h2>
+    
             <table id="customers">
                 <thead>
                     <tr>
