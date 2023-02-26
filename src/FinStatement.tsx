@@ -19,6 +19,13 @@ interface Props {
 
 const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
   console.log(data)
+
+  let curyr = data.data[0].at(3)?.value
+  let curyr2 = parseFloat(curyr!)
+  
+  console.log(curyr)
+  console.log(curyr2)
+  //rowHeaders?.at(0)?.label 
   
   // Gets dimentions and measures columns 
   const dims = data.rowHeaders?.map(cell => {
@@ -60,7 +67,7 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
   dt.map(function(d){
     d.Period = parseFloat(d.Period);
     d.amount = parseFloat(d.amount);})
-  
+
   // agregation by period and item 
   let new_dt = tidy(
     dt,
