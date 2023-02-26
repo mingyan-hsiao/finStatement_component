@@ -6,7 +6,7 @@ import {
   TContext
 } from '@incorta-org/component-sdk';
 import React from 'react';
-import { tidy, pivotLonger, mutate,fullJoin,leftJoin, groupBy, summarize, sum, filter, last } from '@tidyjs/tidy'
+import { tidy, pivotLonger, mutate, leftJoin, groupBy, summarize, sum, filter} from '@tidyjs/tidy'
 import './App.css';
 
   
@@ -50,7 +50,7 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
     d.Period = parseFloat(d.Period);})
 
   // get current year defined in Incorta Insight
-  const curr = parseInt(data.data[0].at(3)?.value!)
+  const curr = parseInt(data.data[0].at(-1)?.value!)
   // only use 2 years data for process
   raw_input =raw_input.filter(d => d.Period == curr || d.Period == curr-1);
   console.log(raw_input)
@@ -91,17 +91,28 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
       leftJoin(lastyrdata, { by: 'item' }))
   console.log("two")
   console.log(twodata)
+
   // add percentage change rate between two years
   function formatAsPercent(num:number) {
       return `${Math.floor(num*100)}%`;}
 
+  // add three new columns
   let ratio_dt = tidy(twodata, mutate({
     rate: (d: any) => formatAsPercent((d.total - d.totallast)/d.totallast),
     // non-null assertion operator to ensure it is number type
     curr_ratio: (d: any)=> formatAsPercent(d.total/twodata.at(0)?.total!),
     last_ratio: (d: any)=> formatAsPercent(d.totallast/twodata.at(0)?.totallast!)
   }))
-  ratio_dt.pop()
+  ratio_dt.pop() // delete the unused "New formula"
+
+  // try to do indentation, but not working
+  // const bla = "  "
+  // for(let i = 0; i < ratio_dt.length; i++){
+  //   if(ratio_dt[i].item == "Gross Profit"){
+  //     ratio_dt[i].item = bla.concat(ratio_dt[i].item)
+  //   }
+  // }
+
   console.log("output");
   console.log(ratio_dt);
   
@@ -128,13 +139,11 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
             <table id="customers">
                 <thead>
                     <tr>
-
-                  
                     <th>Item</th>
-                    <th>Current year</th>
-                    <th>Current ratio</th>
-                    <th>Last year</th>
-                    <th>Last ratio</th>
+                    <th>{curr}</th>
+                    <th>{curr} ratio</th>
+                    <th>{curr-1}</th>
+                    <th>{curr-1} ratio</th>
                     <th>Percentage Change</th>
 
 
