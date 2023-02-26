@@ -19,13 +19,6 @@ interface Props {
 
 const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
   console.log(data)
-
-  let curyr = data.data[0].at(3)?.value
-  let curyr2 = parseFloat(curyr!)
-  
-  console.log(curyr)
-  console.log(curyr2)
-  //rowHeaders?.at(0)?.label 
   
   // Gets dimentions and measures columns 
   const dims = data.rowHeaders?.map(cell => {
@@ -43,15 +36,26 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
   let _rawData = data.data.map((col: any) => {
     let colsName = col;
     return colsName});
- 
+    
+  
+
   // adjust the key name with colsName 
-  const raw_input: any[] = []
+  let raw_input: any[] = []
   _rawData.map(function(d){
     let r = {}
     for(let i = 0; i < colsName.length; i++){ 
       r[colsName[i]] = d[i].formatted}
     raw_input.push(r) // append array
     })
+
+  raw_input.map(function(d){
+    d.Period = parseFloat(d.Period);})
+
+  // get current year defined in Incorta Insight
+  const curr = parseInt(data.data[0].at(3)?.value!)
+  // only use 2 years data for process
+  raw_input =raw_input.filter(d => d.Period == curr || d.Period == curr-1);
+  console.log(raw_input)
 
   // unpiviot the column into: period, item, amount 
   let dt = tidy(
@@ -74,7 +78,7 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
     groupBy(['Period', 'item'], [summarize({ total: sum('amount') })]))
   
   // fixe the input current year, will be revised in the next steps
-  let curr = 2022
+  
   let currdata = tidy(new_dt, filter((d) => d.Period === curr))
   let lastdata = tidy(new_dt, filter((d) => d.Period === curr-1))
   // change the key name of last year data
@@ -120,7 +124,7 @@ const FinStatement = ({ context, prompts, data, drillDown }: Props) => {
 
 
   return (
-    <div><h2>2022 Income Statement</h2>
+    <div><h2>Income Statement</h2>
             <table id="customers">
                 <thead>
                     <tr>
