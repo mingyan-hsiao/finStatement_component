@@ -1,0 +1,63 @@
+{
+  "icon": "./assets/icon.svg",
+  "name": "finStatement",
+  "hint": "fin",
+  "options": {
+    "aggregation": true,
+    "individualFilter": true
+    
+  },
+  "settings": [
+    {
+      "name": {
+        "key": "group"
+      },
+      "settings": [
+        {
+          "name": {
+            "key": "setting"
+          },
+          "key": "key1",
+          "type": "boolean"
+        }
+      ]
+    }
+  ],
+  "bindingsTrays": [
+      {
+        "key": "tray-key",
+        "name": "Dimension",
+        "queryRole": "row",
+        "minCount": 1,
+        "maxCount": 1,
+        "settings": [
+          {
+            "name":"Group1",
+            "settings": [
+              {
+                "name":"Sorting",
+                "key":"sort1",
+                "type":"sort"
+            }
+            ]
+          }
+        ]
+      },
+      {
+        "key": "tray-key1",
+        "name": {
+          "key": "account"
+        },
+        "queryRole": "measure",
+        "minCount": 1
+      },
+      {
+        "key": "tray-key2",
+        "name": {
+          "key": "test"
+        },
+        "queryRole": "measure"
+      }
+
+  ]
+}
